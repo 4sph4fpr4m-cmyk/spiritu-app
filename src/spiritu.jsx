@@ -2674,8 +2674,15 @@ function SacramentHub({ rite, nightMode, children, scrollToTop = () => {} }) {
       )}
 
       {/* Sacrament cards */}
+      {!selectedChild && (
+        <div style={{ background: nm.surface, borderRadius: "14px", padding: "16px 18px", marginBottom: "14px", border: "2px dashed " + nm.border, textAlign: "center" }}>
+          <div style={{ fontSize: "22px", marginBottom: "8px" }}>above</div>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: nm.text, fontFamily: "Georgia, serif", marginBottom: "4px" }}>Select a child first</div>
+          <div style={{ fontSize: "12px", color: nm.muted, fontFamily: "Georgia, serif" }}>Tap a name above to choose who is preparing for a sacrament</div>
+        </div>
+      )}
       <div style={{ fontSize: "11px", color: nm.muted, fontFamily: "Georgia, serif", marginBottom: "10px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-        {selectedChild ? "Select a sacrament for " + selectedChild : "Select a child above, then choose a sacrament"}
+        {selectedChild ? "Select a sacrament for " + selectedChild : ""}
       </div>
 
       {sacramentOrder.map(key => {
@@ -2703,7 +2710,7 @@ function SacramentHub({ rite, nightMode, children, scrollToTop = () => {} }) {
             border: "2px solid " + (started ? s.color : nm.border),
             background: started ? s.bg : nm.surface,
             cursor: selectedChild ? "pointer" : "not-allowed",
-            opacity: selectedChild ? 1 : 0.5,
+            opacity: selectedChild ? 1 : 0.35,
             textAlign: "left", transition: "all 0.15s",
           }}>
             {/* Progress ring */}
