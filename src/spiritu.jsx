@@ -4300,13 +4300,24 @@ function WelcomeBanner({ rite, children, onDismiss }) {
 // ── Root App ──────────────────────────────────────────────
 
 export default function App() {
-  const [obScreen, setObScreen] = useState("welcome"); // welcome | rite | children | done
+  const [obScreen, setObScreen] = useState(() => {
+    try { return localStorage.getItem("spiritu_ob_done") === "1" ? "done" : "welcome"; }
+    catch { return "welcome"; }
+  }); // welcome | rite | children | done
   const [obRite, setObRite] = useState(null);
   const [obChildren, setObChildren] = useState([]);
   const [showWelcomeBanner, setShowWelcomeBanner] = useState(true);
 
   const [tab, setTab] = useState("today");
-  const [rite, setRite] = useState("TLM");
+  const [rite, setRite] = useState(() => {
+    try { return localStorage.getItem("spiritu_rite") || "TLM"; }
+    catch { return "TLM"; }
+  });
+
+  useEffect(() => {
+    try { localStorage.setItem("spiritu_rite", rite); }
+    catch {}
+  }, [rite]);
   const [nightMode, setNightMode] = useState(false);
   const [fontSize, setFontSize] = useState("md");
   const mainScrollRef = useRef(null);
@@ -4320,7 +4331,16 @@ export default function App() {
   const [feast, setFeast] = useState(null);
   const [content, setContent] = useState(null);
   const [contentLoading, setContentLoading] = useState(true);
-  const [children, setChildren] = useState([]);
+  const [children, setChildren] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("spiritu_children") || "[]"); }
+    catch { return []; }
+  });
+
+  // Persist children to localStorage whenever they change
+  useEffect(() => {
+    try { localStorage.setItem("spiritu_children", JSON.stringify(children)); }
+    catch {}
+  }, [children]);
 
   // Inject welcome banner state into the app
   const welcomeBannerEl = (obScreen === "done" && showWelcomeBanner) ? (
