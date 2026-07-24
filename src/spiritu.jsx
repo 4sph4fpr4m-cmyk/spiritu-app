@@ -1,6 +1,11 @@
 // Spiritu -- Gloria Dei Technologies -- v2.0
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 
+// API key — set via VITE_ANTHROPIC_API_KEY environment variable in production
+const ANTHROPIC_API_KEY = (typeof window !== "undefined" && window.__ANTHROPIC_KEY__)
+  || (typeof process !== "undefined" && process.env?.VITE_ANTHROPIC_API_KEY)
+  || "";
+
 // ═══════════════════════════════════════════════════════════
 // FONT SCALE CONTEXT
 // ═══════════════════════════════════════════════════════════
@@ -515,7 +520,12 @@ Generate a JSON object with exactly these fields:
 Return ONLY valid JSON. No markdown, no backticks, no preamble.`;
 
   const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST", headers: { "Content-Type": "application/json" },
+    method: "POST", headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
     body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, messages: [{ role: "user", content: prompt }] }),
   });
   const data = await res.json();
@@ -1069,7 +1079,12 @@ function AskScreen({ children, setChildren, rite }) {
     try {
       const history = prev.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
         body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000,
           system: `You are a warm, faithful Catholic faith guide. ${getAgePrompt(child.age)} ${riteNote} Be theologically sound, warm, never scary. End with a gentle thought. The child's name is ${child.name}.`,
           messages: [...history, { role: "user", content: q }] }),
@@ -4513,4 +4528,3 @@ export default function App() {
     </FontCtx.Provider>
   );
 }
-
