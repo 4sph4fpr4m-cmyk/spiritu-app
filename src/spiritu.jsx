@@ -747,20 +747,22 @@ function ReadingsSection({ date, feast, rite }) {
     setLoading(true);
     setError(false);
 
-    // Build Gueranger URL for the link regardless of fetch success
-    const slug = buildGuerangerSlug(feast, date);
-    setGuerangerUrl("https://sensusfidelium.com/the-liturgical-year-dom-prosper-gueranger/" + slug + "/");
+    // Build Gueranger monthly URL - reliable, no slug guessing
+    const months = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+    const month = months[date.getMonth()];
+    setGuerangerUrl("https://sensusfidelium.com/the-liturgical-year-dom-prosper-gueranger/" + month + "/");
 
-    // Fetch readings and Gueranger in parallel
-    Promise.all([
-      fetchReadings(date).catch(() => null),
-      fetchGueranger(feast, date).catch(() => null),
-    ]).then(([r, g]) => {
-      setReadings(r);
-      setGueranger(g);
-      setLoading(false);
-      if (!r) setError(true);
-    });
+    // Fetch readings only
+    fetchReadings(date)
+      .then(r => {
+        setReadings(r);
+        setLoading(false);
+        if (!r) setError(true);
+      })
+      .catch(() => {
+        setLoading(false);
+        setError(true);
+      });
   }, [date]);
 
   if (rite !== "TLM") return null;
@@ -794,27 +796,15 @@ function ReadingsSection({ date, feast, rite }) {
 
       {readings && !loading && (
         <>
-          {/* Dom Gueranger reflection - leads */}
-          {gueranger && (
-            <div style={{ background: "linear-gradient(135deg, #1a2744 0%, #243459 100%)", borderRadius: "16px", padding: "18px 20px", marginBottom: "12px", position: "relative", overflow: "hidden" }}>
-              <div style={{ position: "absolute", top: -10, right: -10, fontSize: "60px", opacity: 0.06 }}>+</div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-                <div>
-                  <div style={{ fontSize: "10px", color: C.gold, letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: "Georgia, serif" }}>Dom Prosper Gueranger</div>
-                  <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", fontFamily: "Georgia, serif", fontStyle: "italic" }}>The Liturgical Year, 1841-1875</div>
-                </div>
-                {guerangerUrl && (
-                  <a href={guerangerUrl} target="_blank" rel="noreferrer" style={{ fontSize: "10px", color: C.gold, fontFamily: "Georgia, serif", textDecoration: "none", border: "1px solid rgba(201,169,110,0.4)", borderRadius: "10px", padding: "3px 8px" }}>Full text</a>
-                )}
+          {/* Dom Gueranger link */}
+          {guerangerUrl && (
+            <a href={guerangerUrl} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px 16px", borderRadius: "14px", border: "1px solid " + C.border, background: "#fff", marginBottom: "12px", textDecoration: "none" }}>
+              <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#1a2744", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <span style={{ color: C.gold, fontSize: "16px" }}>+</span>
               </div>
-              <p style={{ fontSize: "14px", color: "#e8e0d0", fontFamily: "Georgia, serif", lineHeight: "1.8", margin: 0, fontStyle: "italic" }}>{gueranger}...</p>
-            </div>
-          )}
-          {!gueranger && !loading && guerangerUrl && (
-            <a href={guerangerUrl} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", gap: "10px", padding: "14px 16px", borderRadius: "14px", border: "1px solid " + C.border, background: "#fff", marginBottom: "12px", textDecoration: "none" }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: "12px", fontWeight: "600", color: "#1a2744", fontFamily: "Georgia, serif" }}>Dom Gueranger on today's feast</div>
-                <div style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif" }}>Read The Liturgical Year at Sensus Fidelium</div>
+                <div style={{ fontSize: "13px", fontWeight: "600", color: "#1a2744", fontFamily: "Georgia, serif" }}>Dom Gueranger on this month</div>
+                <div style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif" }}>The Liturgical Year at Sensus Fidelium</div>
               </div>
               <span style={{ color: C.mutedGold, fontSize: "16px" }}>&#8250;</span>
             </a>
@@ -2674,11 +2664,16 @@ function SacramentHub({ rite, nightMode, children, scrollToTop = () => {} }) {
       )}
 
       {/* Sacrament cards */}
-      {!selectedChild && (
+      {!selectedChild && children && children.length > 0 && (
         <div style={{ background: nm.surface, borderRadius: "14px", padding: "16px 18px", marginBottom: "14px", border: "2px dashed " + nm.border, textAlign: "center" }}>
-          <div style={{ fontSize: "22px", marginBottom: "8px" }}>above</div>
-          <div style={{ fontSize: "14px", fontWeight: "600", color: nm.text, fontFamily: "Georgia, serif", marginBottom: "4px" }}>Select a child first</div>
-          <div style={{ fontSize: "12px", color: nm.muted, fontFamily: "Georgia, serif" }}>Tap a name above to choose who is preparing for a sacrament</div>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: nm.text, fontFamily: "Georgia, serif", marginBottom: "4px" }}>Tap a child's name above to begin</div>
+          <div style={{ fontSize: "12px", color: nm.muted, fontFamily: "Georgia, serif" }}>The sacrament cards will activate once you select who is preparing</div>
+        </div>
+      )}
+      {(!children || children.length === 0) && (
+        <div style={{ background: nm.surface, borderRadius: "14px", padding: "16px 18px", marginBottom: "14px", border: "2px dashed " + nm.border, textAlign: "center" }}>
+          <div style={{ fontSize: "14px", fontWeight: "600", color: nm.text, fontFamily: "Georgia, serif", marginBottom: "4px" }}>No children added yet</div>
+          <div style={{ fontSize: "12px", color: nm.muted, fontFamily: "Georgia, serif" }}>Go to Settings to add your children first</div>
         </div>
       )}
       <div style={{ fontSize: "11px", color: nm.muted, fontFamily: "Georgia, serif", marginBottom: "10px", letterSpacing: "0.06em", textTransform: "uppercase" }}>
