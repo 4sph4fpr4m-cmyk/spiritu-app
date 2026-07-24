@@ -671,7 +671,7 @@ function parseReadings(markdown) {
 
 async function fetchReadings(date) {
   const dateStr = date.toISOString().split("T")[0];
-  const url = "https://www.missalemeum.com/en/calendar/" + dateStr;
+  const url = "/api/readings?date=" + dateStr;
   const response = await fetch(url);
   if (!response.ok) throw new Error("Failed to fetch");
   const html = await response.text();
@@ -699,7 +699,7 @@ function buildGuerangerSlug(feast, date) {
 
 async function fetchGueranger(feast, date) {
   const slug = buildGuerangerSlug(feast, date);
-  const url = "https://sensusfidelium.com/the-liturgical-year-dom-prosper-gueranger/" + slug + "/";
+  const url = "/api/gueranger?slug=" + encodeURIComponent(slug);
   const response = await fetch(url);
   if (!response.ok) throw new Error("Not found");
   const html = await response.text();
