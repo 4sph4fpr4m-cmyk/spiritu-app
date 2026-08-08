@@ -2115,7 +2115,7 @@ function ConfessionGuide({ rite, nightMode }) {
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       {/* Header */}
       <div style={{ background: "#1a2744", padding: "14px 18px", flexShrink: 0, display: "flex", alignItems: "center", gap: "12px" }}>
-        <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", color: "#c9a96e", fontSize: "13px", cursor: "pointer", fontFamily: "Georgia, serif", padding: 0, display: "flex", alignItems: "center", gap: "4px" }}><span style={{fontSize:"16px"}}>lt</span> Back</button>
+        <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", color: "#c9a96e", fontSize: "13px", cursor: "pointer", fontFamily: "Georgia, serif", padding: 0 }}>&#8249; Back</button>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: "13px", fontWeight: "700", color: "#fff", fontFamily: "Georgia, serif" }}>Examination of Conscience</div>
           <div style={{ fontSize: "11px", color: "#c9a96e", fontFamily: "Georgia, serif" }}>{data.ageRange} -- tap everything that applies</div>
@@ -2226,9 +2226,14 @@ function ConfessionGuide({ rite, nightMode }) {
             ))}
           </div>
 
-          <button onClick={() => setScreen("card")} style={{ width: "100%", padding: "13px", borderRadius: "12px", border: "2px solid #1a2744", background: "transparent", color: "#1a2744", fontFamily: "Georgia, serif", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
-            Also see the Confession Card
-          </button>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button onClick={() => setScreen("card")} style={{ flex: 1, padding: "13px", borderRadius: "12px", border: "2px solid #1a2744", background: "transparent", color: "#1a2744", fontFamily: "Georgia, serif", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>
+              Confession Card
+            </button>
+            <button onClick={() => { setSelected({}); setScreen("home"); }} style={{ padding: "13px 16px", borderRadius: "12px", border: "1px solid #E0D5C8", background: "transparent", color: "#9a8060", fontFamily: "Georgia, serif", fontSize: "13px", cursor: "pointer" }}>
+              Start Over
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -2238,7 +2243,7 @@ function ConfessionGuide({ rite, nightMode }) {
   if (screen === "card") return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div style={{ background: "#1a2744", padding: "14px 18px", flexShrink: 0, display: "flex", alignItems: "center", gap: "12px" }}>
-        <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", color: "#c9a96e", fontSize: "13px", cursor: "pointer", fontFamily: "Georgia, serif", padding: 0 }}>&#8249; Back</button>
+        <button onClick={() => setScreen("list")} style={{ background: "none", border: "none", color: "#c9a96e", fontSize: "13px", cursor: "pointer", fontFamily: "Georgia, serif", padding: 0 }}>&#8249; My List</button>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: "13px", fontWeight: "700", color: "#fff", fontFamily: "Georgia, serif" }}>Confession Card</div>
           <div style={{ fontSize: "11px", color: "#c9a96e", fontFamily: "Georgia, serif" }}>Copy this out -- you can keep it</div>
@@ -2305,6 +2310,9 @@ function ConfessionGuide({ rite, nightMode }) {
         <div style={{ background: nm.surface, borderRadius: "14px", padding: "14px 16px", border: "1px solid " + nm.border }}>
           <div style={{ fontSize: "10px", color: "#9a8060", fontFamily: "Georgia, serif", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "6px" }}>How to use this card</div>
           <p style={{ fontSize: "13px", color: nm.text, fontFamily: "Georgia, serif", lineHeight: "1.6", margin: 0, fontStyle: "italic" }}>Copy the steps and the Act of Contrition onto a small card. You can keep this card -- it is not private. Some children laminate it. It is yours to use every time you go to Confession.</p>
+          <button onClick={() => { setSelected({}); setScreen("home"); }} style={{ width: "100%", padding: "12px", borderRadius: "12px", border: "1px solid #E0D5C8", background: "transparent", color: "#9a8060", fontFamily: "Georgia, serif", fontSize: "13px", cursor: "pointer", marginTop: "8px" }}>
+            Start Over
+          </button>
         </div>
       </div>
     </div>
