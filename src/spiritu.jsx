@@ -1501,6 +1501,22 @@ function PrayerHub({ rite, feast, selectedDate, nightMode = false, FS = 1 }) {
   return (
     <div style={{ padding: "16px 16px 32px", overflowY: "auto", background: nightMode ? "#0d1117" : "transparent" }}>
 
+      {/* Confession Guide — leads the Prayers tab */}
+      <div style={{ marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <div style={{ flex: 1, height: "1px", background: C.border }} />
+          <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Sacrament of Penance</span>
+          <div style={{ flex: 1, height: "1px", background: C.border }} />
+        </div>
+        <ConfessionGuide rite={rite} nightMode={nightMode} />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+        <div style={{ flex: 1, height: "1px", background: C.border }} />
+        <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Family Prayers</span>
+        <div style={{ flex: 1, height: "1px", background: C.border }} />
+      </div>
+
       {/* Tonight's Prayer */}
       <div style={{ background: `linear-gradient(135deg, #111b30 0%, #1a2744 100%)`, borderRadius: "18px", padding: "20px 22px", marginBottom: "16px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: -15, right: -15, fontSize: "70px", opacity: 0.06 }}>🌙</div>
@@ -1579,15 +1595,6 @@ function PrayerHub({ rite, feast, selectedDate, nightMode = false, FS = 1 }) {
         </PrayerSection>
       )}
 
-      {/* Confession Guide — prominent section */}
-      <div style={{ marginTop: "8px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", paddingTop: "4px" }}>
-          <div style={{ flex: 1, height: "1px", background: C.border }} />
-          <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Sacrament of Penance</span>
-          <div style={{ flex: 1, height: "1px", background: C.border }} />
-        </div>
-        <ConfessionGuide rite={rite} nightMode={nightMode} />
-      </div>
 
     </div>
   );
@@ -1902,7 +1909,11 @@ function printConfessionCard(data, rite) {
 function ConfessionGuide({ rite, nightMode }) {
   const [ageKey, setAgeKey] = useState("6-7");
   const [screen, setScreen] = useState("home");
-  useEffect(() => { scrollToTop(); }, [screen]); // home | examine | list | card
+  useEffect(() => {
+    document.querySelectorAll(".ck-scroll").forEach(el => { el.scrollTop = 0; });
+    let el = document.querySelector(".ck-scroll");
+    while (el) { el.scrollTop = 0; el = el.parentElement; }
+  }, [screen]);
   const [selected, setSelected] = useState({});
   const data = EXAM_DATA[ageKey];
 
