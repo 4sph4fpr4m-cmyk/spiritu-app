@@ -1501,22 +1501,6 @@ function PrayerHub({ rite, feast, selectedDate, nightMode = false, FS = 1 }) {
   return (
     <div style={{ padding: "16px 16px 32px", overflowY: "auto", background: nightMode ? "#0d1117" : "transparent" }}>
 
-      {/* Confession Guide — leads the Prayers tab */}
-      <div style={{ marginBottom: "20px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-          <div style={{ flex: 1, height: "1px", background: C.border }} />
-          <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Sacrament of Penance</span>
-          <div style={{ flex: 1, height: "1px", background: C.border }} />
-        </div>
-        <ConfessionGuide rite={rite} nightMode={nightMode} />
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-        <div style={{ flex: 1, height: "1px", background: C.border }} />
-        <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Family Prayers</span>
-        <div style={{ flex: 1, height: "1px", background: C.border }} />
-      </div>
-
       {/* Tonight's Prayer */}
       <div style={{ background: `linear-gradient(135deg, #111b30 0%, #1a2744 100%)`, borderRadius: "18px", padding: "20px 22px", marginBottom: "16px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: -15, right: -15, fontSize: "70px", opacity: 0.06 }}>🌙</div>
@@ -1721,6 +1705,134 @@ const EXAM_DATA = {
       { n: "5", title: "Act of Contrition", body: "Pray it slowly. Mean every word. Sorrow for love of God -- not just fear of punishment -- is the heart of a good Confession." },
       { n: "6", title: "Absolution", body: "'Ego te absolvo a peccatis tuis in nomine Patris et Filii et Spiritus Sancti.' Your sins are gone. Completely. Forever." },
       { n: "7", title: "Give thanks", body: "Thank the priest. Return to your seat. Speak to Our Lord. Do your penance. Go in peace." },
+    ],
+  },
+
+  "11-17": {
+    label: "Teenagers",
+    ageRange: "Ages 11-17",
+    color: "#5B6FA6",
+    bg: "#EEF0FA",
+    intro: "A serious examination takes time. Find a quiet place. Ask the Holy Ghost to show you your heart clearly. Tap everything that applies.",
+    categories: [
+      { id: "god", label: "God and Prayer", icon: "praying_hands", items: [
+        { id: "g1", text: "I have been dishonest or distracted in my prayers." },
+        { id: "g2", text: "I missed Mass on Sunday or a Holy Day without a serious reason." },
+        { id: "g3", text: "I received Holy Communion in a state of mortal sin." },
+        { id: "g4", text: "I used God's name carelessly or as a curse." },
+        { id: "g5", text: "I have put something before God -- a person, a phone, a habit." },
+        { id: "g6", text: "I have looked at or sought out things I knew were impure or contrary to faith." },
+        { id: "g7", text: "I have been ashamed of my faith or denied it in front of others." },
+      ]},
+      { id: "family", label: "Family", icon: "house", items: [
+        { id: "f1", text: "I have been disobedient or disrespectful to my parents." },
+        { id: "f2", text: "I have been deliberately unkind or cruel to a sibling." },
+        { id: "f3", text: "I have failed in my duties at home or in school." },
+        { id: "f4", text: "I have caused my parents serious worry through my choices." },
+      ]},
+      { id: "words", label: "Words and Truth", icon: "speaking", items: [
+        { id: "w1", text: "I have lied -- to protect myself or manipulate someone." },
+        { id: "w2", text: "I have gossiped or damaged someone's reputation." },
+        { id: "w3", text: "I have used seriously bad language or degraded others with my words." },
+        { id: "w4", text: "I have been cruel online -- in messages, posts, or comments." },
+        { id: "w5", text: "I have broken a serious promise or betrayed a confidence." },
+      ]},
+      { id: "actions", label: "Actions", icon: "star", items: [
+        { id: "a1", text: "I have physically hurt someone on purpose." },
+        { id: "a2", text: "I have stolen or taken something without permission." },
+        { id: "a3", text: "I have been involved in bullying -- as instigator or silent bystander." },
+        { id: "a4", text: "I have engaged in or encouraged impure actions." },
+        { id: "a5", text: "I have been drunk or used substances I should not have." },
+      ]},
+      { id: "heart", label: "Interior Life", icon: "heart", items: [
+        { id: "h1", text: "I have harbored hatred or lasting resentment toward someone." },
+        { id: "h2", text: "I have deliberately entertained impure thoughts or sought them out." },
+        { id: "h3", text: "I have been proud -- unable to admit fault, seeking admiration." },
+        { id: "h4", text: "I have been consumed by envy of what others have." },
+        { id: "h5", text: "I have refused to forgive someone who hurt me." },
+        { id: "h6", text: "I have given in to despair about my sins or my worth to God." },
+      ]},
+      { id: "omission", label: "Sins of Omission", icon: "praying_hands", items: [
+        { id: "om1", text: "I have seen someone suffering and deliberately looked away." },
+        { id: "om2", text: "I had the chance to defend someone and stayed silent out of cowardice." },
+        { id: "om3", text: "I knew the right thing to do and chose not to do it." },
+      ]},
+    ],
+    actOfContrition: "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, Who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to sin no more and to avoid the near occasions of sin. Amen.",
+    steps: [
+      { n: "1", title: "Prepare", body: "Before entering, ask the Holy Ghost: 'Come, Holy Ghost, help me make a good and complete Confession.'" },
+      { n: "2", title: "Begin", body: "Kneel. Make the Sign of the Cross. Say: 'Bless me Father, for I have sinned. My last Confession was [how long ago]. These are my sins.'" },
+      { n: "3", title: "Confess", body: "State your sins clearly. For mortal sins, say the kind and approximately how many times. Speak without minimizing or exaggerating." },
+      { n: "4", title: "Penance", body: "Accept your penance with gratitude. Intend to perform it as soon as possible." },
+      { n: "5", title: "Act of Contrition", body: "Pray slowly. Mean it. True contrition -- sorrow for love of God, not just fear of punishment -- is the heart of a good Confession." },
+      { n: "6", title: "Absolution", body: "'Ego te absolvo a peccatis tuis in nomine Patris et Filii et Spiritus Sancti.' Your sins are gone. Completely. Forever." },
+      { n: "7", title: "Thanksgiving", body: "Thank the priest. Return to your pew. Speak to Our Lord. Do your penance. Go in peace." },
+    ],
+  },
+
+  "18+": {
+    label: "Adults",
+    ageRange: "Adults (18+)",
+    color: "#8B1A1A",
+    bg: "#FDF5F0",
+    intro: "Take the time this deserves. The examination of an adult conscience is an act of truth before God. Ask the Holy Ghost to illuminate what you cannot see yourself.",
+    categories: [
+      { id: "god", label: "Duties to God", icon: "praying_hands", items: [
+        { id: "g1", text: "Have I been faithful in daily prayer, or has it become empty or been abandoned?" },
+        { id: "g2", text: "Have I missed Mass on Sundays or Holy Days without serious reason?" },
+        { id: "g3", text: "Have I received Holy Communion in a state of mortal sin?" },
+        { id: "g4", text: "Have I gone to Confession at least once a year?" },
+        { id: "g5", text: "Have I used God's name irreverently?" },
+        { id: "g6", text: "Have I placed anything -- work, money, relationships, comfort -- before God?" },
+        { id: "g7", text: "Have I been involved in anything contrary to faith: occultism, or movements hostile to the Church?" },
+        { id: "g8", text: "Have I failed to profess my faith when called to?" },
+      ]},
+      { id: "family", label: "Family and Vocation", icon: "house", items: [
+        { id: "f1", text: "Have I fulfilled my duties as a spouse faithfully and with charity?" },
+        { id: "f2", text: "Have I been a faithful and attentive parent -- present, patient, forming my children in the faith?" },
+        { id: "f3", text: "Have I honored and cared for my own parents as they age?" },
+        { id: "f4", text: "Have I been faithful to my vocation and state in life?" },
+        { id: "f5", text: "Have I failed in my duties as an employer or employee?" },
+      ]},
+      { id: "purity", label: "Chastity and Purity", icon: "heart", items: [
+        { id: "p1", text: "Have I been faithful to my marriage vows in act and in thought?" },
+        { id: "p2", text: "Have I deliberately sought out or dwelt on impure thoughts or content?" },
+        { id: "p3", text: "Have I been involved in actions contrary to chastity outside of marriage?" },
+        { id: "p4", text: "Have I used artificial contraception or been complicit in an abortion?" },
+        { id: "p5", text: "Have I caused others to sin against purity by my actions, dress, or speech?" },
+      ]},
+      { id: "truth", label: "Truth and Justice", icon: "sparkles", items: [
+        { id: "t1", text: "Have I lied seriously or deceived others for my own advantage?" },
+        { id: "t2", text: "Have I damaged someone's reputation by detraction or calumny?" },
+        { id: "t3", text: "Have I stolen, defrauded, or failed to make restitution?" },
+        { id: "t4", text: "Have I paid just wages and treated those who work for me with dignity?" },
+        { id: "t5", text: "Have I been a just steward of what I have been given?" },
+      ]},
+      { id: "heart", label: "Interior Life", icon: "praying_hands", items: [
+        { id: "h1", text: "Have I harbored lasting hatred or an unwillingness to forgive?" },
+        { id: "h2", text: "Have I been seriously proud -- unable to admit fault, self-righteous?" },
+        { id: "h3", text: "Have I been consumed by envy?" },
+        { id: "h4", text: "Have I given in to anger in ways that damaged my relationships or harmed others?" },
+        { id: "h5", text: "Have I been seriously intemperate in food, drink, or any substance?" },
+        { id: "h6", text: "Have I been slothful in my spiritual life -- neglecting the duties of my state?" },
+        { id: "h7", text: "Have I despaired of God's mercy or presumed upon it?" },
+      ]},
+      { id: "omission", label: "Sins of Omission", icon: "star", items: [
+        { id: "om1", text: "Have I neglected those in genuine need when I had the means to help?" },
+        { id: "om2", text: "Have I failed to speak the truth when silence was cowardice?" },
+        { id: "om3", text: "Have I failed to raise my children in the faith or allowed their formation to lapse?" },
+        { id: "om4", text: "Have I failed to pray for those entrusted to my care?" },
+      ]},
+    ],
+    actOfContrition: "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, Who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to sin no more and to avoid the near occasions of sin. Amen.",
+    steps: [
+      { n: "1", title: "Prepare your heart", body: "Spend a few minutes in silence before entering. Pray: 'Come, Holy Ghost, enlighten my mind and move my heart that I may know my sins, be truly sorry for them, confess them fully, and firmly resolve to amend my life.'" },
+      { n: "2", title: "Enter and begin", body: "Kneel. Make the Sign of the Cross. Say: 'Bless me Father, for I have sinned. My last Confession was [how long ago]. These are my sins.'" },
+      { n: "3", title: "Confess completely", body: "Confess all mortal sins by kind and number. Confess venial sins as well. Speak clearly, without minimizing, dramatizing, or blaming others." },
+      { n: "4", title: "Accept your penance", body: "Receive your penance with gratitude and the firm intention to perform it as soon as possible -- ideally before leaving the church." },
+      { n: "5", title: "Act of Contrition", body: "Pray it slowly, meaning every word. True contrition -- sorrow for love of God rather than merely fear of punishment -- is the heart of a good Confession." },
+      { n: "6", title: "Absolution", body: "'Ego te absolvo a peccatis tuis in nomine Patris et Filii et Spiritus Sancti. Amen.' These words, spoken in the person of Christ, truly forgive your sins. They are gone. Completely. Forever." },
+      { n: "7", title: "Thanksgiving", body: "Thank the priest. Return to your pew. Make a thanksgiving -- speak to Our Lord, present in your soul in grace. Do your penance. Go in peace." },
     ],
   },
 };
@@ -1954,16 +2066,16 @@ function ConfessionGuide({ rite, nightMode }) {
       {/* Age selector */}
       <div style={{ marginBottom: "16px" }}>
         <div style={{ fontSize: "11px", color: nm.muted, fontFamily: "Georgia, serif", marginBottom: "8px", letterSpacing: "0.06em", textTransform: "uppercase" }}>Who is preparing?</div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px" }}>
           {Object.entries(EXAM_DATA).map(([key, d]) => (
-            <button key={key} onClick={() => { setAgeKey(key); setSelected({}); }} style={{
-              flex: 1, padding: "12px 8px", borderRadius: "12px",
+            <button key={key} onClick={() => { setAgeKey(key); setSelected({}); setScreen("home"); }} style={{
+              flexShrink: 0, padding: "10px 14px", borderRadius: "12px",
               border: "2px solid " + (ageKey === key ? d.color : nm.border),
               background: ageKey === key ? d.bg : nm.surface,
               cursor: "pointer", transition: "all 0.15s",
             }}>
-              <div style={{ fontSize: "12px", fontWeight: "700", color: ageKey === key ? d.color : nm.muted, fontFamily: "Georgia, serif" }}>{d.ageRange}</div>
-              <div style={{ fontSize: "10px", color: ageKey === key ? d.color : nm.muted, fontFamily: "Georgia, serif", marginTop: "2px", opacity: 0.8 }}>{d.label}</div>
+              <div style={{ fontSize: "12px", fontWeight: "700", color: ageKey === key ? d.color : nm.muted, fontFamily: "Georgia, serif", whiteSpace: "nowrap" }}>{d.ageRange}</div>
+              <div style={{ fontSize: "10px", color: ageKey === key ? d.color : nm.muted, fontFamily: "Georgia, serif", marginTop: "2px", opacity: 0.8, whiteSpace: "nowrap" }}>{d.label}</div>
             </button>
           ))}
         </div>
@@ -2656,6 +2768,22 @@ function SacramentHub({ rite, nightMode, children, scrollToTop = () => {} }) {
 
   return (
     <div style={{ padding: "16px 16px 32px", background: nm.bg }}>
+
+      {/* Confession Guide section */}
+      <div style={{ marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <div style={{ flex: 1, height: "1px", background: nm.border }} />
+          <span style={{ fontSize: "11px", color: nm.muted, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Confession</span>
+          <div style={{ flex: 1, height: "1px", background: nm.border }} />
+        </div>
+        <ConfessionGuide rite={rite} nightMode={nightMode} />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+        <div style={{ flex: 1, height: "1px", background: nm.border }} />
+        <span style={{ fontSize: "11px", color: nm.muted, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Sacrament Preparation</span>
+        <div style={{ flex: 1, height: "1px", background: nm.border }} />
+      </div>
 
       {/* Header */}
       <div style={{ background: "linear-gradient(135deg, #111b30 0%, #1a2744 100%)", borderRadius: "18px", padding: "20px 22px", marginBottom: "16px", position: "relative", overflow: "hidden" }}>
