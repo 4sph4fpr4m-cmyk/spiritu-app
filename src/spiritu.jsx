@@ -249,11 +249,11 @@ const TLM_FIXED = {
   // August
   "8-1":  { name: "St. Peter's Chains (Ad Vincula)", rank: "double_greater", color: "white" },
   "8-2":  { name: "St. Alphonsus Liguori", rank: "double", color: "white" },
-  "8-4":  { name: "St. Dominic", rank: "double", color: "white" },
-  "8-5":  { name: "Dedication of St. Mary Major", rank: "double_greater", color: "white" },
+  "8-4":  { name: "St. Dominic", rank: "double_greater", color: "white" },
+  "8-5":  { name: "Dedication of Our Lady of the Snows", rank: "double_greater", color: "white" },
   "8-6":  { name: "Transfiguration of Our Lord", rank: "double_2", color: "white" },
   "8-7":  { name: "St. Cajetan", rank: "double", color: "white" },
-  "8-8":  { name: "Sts. Cyriacus, Largus and Smaragdus", rank: "semidouble", color: "red" },
+  "8-8":  { name: "St. John Vianney, Cure of Ars", rank: "double", color: "white" },
   "8-9":  { name: "Vigil of St. Lawrence", rank: "simple", color: "purple" },
   "8-10": { name: "St. Lawrence, Deacon and Martyr", rank: "double_2", color: "red" },
   "8-11": { name: "Sts. Tiburtius and Susanna", rank: "semidouble", color: "red" },
@@ -674,8 +674,11 @@ async function fetchReadings(date) {
   const url = "/api/readings?date=" + dateStr;
   const response = await fetch(url);
   if (!response.ok) throw new Error("Failed to fetch");
-  const html = await response.text();
-  return parseReadings(html);
+  const data = await response.json();
+  const readings = parseReadings(data.html || "");
+  // Attach feast info from Missale Meum for TLM calendar accuracy
+  if (data.feast) readings.missalemeum = { name: data.feast, class: data.class, commemoration: data.commemoration };
+  return readings;
 }
 
 // ── Dom Gueranger slug builder ──────────────────────────────
@@ -733,7 +736,7 @@ async function fetchGueranger(feast, date) {
   return bodyText.substring(0, 700).trim();
 }
 
-function ReadingsSection({ date, feast, rite }) {
+function ReadingsSection({ date, feast, rite, onFeastData }) {
   const [readings, setReadings] = useState(null);
   const [gueranger, setGueranger] = useState(null);
   const [guerangerUrl, setGuerangerUrl] = useState(null);
@@ -758,6 +761,8 @@ function ReadingsSection({ date, feast, rite }) {
         setReadings(r);
         setLoading(false);
         if (!r) setError(true);
+        // Pass Missale Meum feast data up to override local TLM calendar
+        if (r?.missalemeum && onFeastData) onFeastData(r.missalemeum);
       })
       .catch(() => {
         setLoading(false);
@@ -888,7 +893,7 @@ function ReadingsSection({ date, feast, rite }) {
   );
 }
 
-function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcomeBanner }) {
+function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcomeBanner, onFeastData }) {
   const [ageGroup, setAgeGroup] = useState("young");
   useEffect(() => { setTimeout(() => { document.querySelectorAll('.ck-scroll').forEach(el => { el.scrollTop = 0; }); }, 0); }, [date]);
   const theme = getTheme(feast?.season);
@@ -951,7 +956,7 @@ function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcome
       </Card>
 
       {/* Daily Readings from 1962 Missal */}
-      <ReadingsSection date={date} feast={feast} rite={rite} />
+      <ReadingsSection date={date} feast={feast} rite={rite} onFeastData={onFeastData} />
 
       <button onClick={onAskQuestion} style={{ width: "100%", padding: "14px", borderRadius: "14px", border: `1.5px solid ${C.green}`, background: "#EDF4EF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "12px" }}>
         <span style={{ fontSize: "16px" }}>💬</span>
@@ -1573,6 +1578,16 @@ function PrayerHub({ rite, feast, selectedDate, nightMode = false, FS = 1 }) {
           ))}
         </PrayerSection>
       )}
+
+      {/* Confession Guide — prominent section */}
+      <div style={{ marginTop: "8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", paddingTop: "4px" }}>
+          <div style={{ flex: 1, height: "1px", background: C.border }} />
+          <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase" }}>Sacrament of Penance</span>
+          <div style={{ flex: 1, height: "1px", background: C.border }} />
+        </div>
+        <ConfessionGuide rite={rite} nightMode={nightMode} />
+      </div>
 
     </div>
   );
@@ -4514,7 +4529,7 @@ export default function App() {
       {/* Screen */}
       <div ref={mainScrollRef} className="ck-scroll" style={{ flex: 1, overflowY: tab === "ask" ? "hidden" : "auto", display: "flex", flexDirection: "column" }}>
         <div style={{ maxWidth: "520px", margin: "0 auto", width: "100%", flex: 1, display: "flex", flexDirection: "column" }}>
-          {tab === "today" && feast && <DailyFeed feast={feast} content={content} loading={contentLoading} date={selectedDate} onAskQuestion={() => setTab("ask")} rite={rite} nightMode={nightMode} FS={FS} welcomeBanner={welcomeBannerEl} />}
+          {tab === "today" && feast && <DailyFeed feast={feast} content={content} loading={contentLoading} date={selectedDate} onAskQuestion={() => setTab("ask")} rite={rite} nightMode={nightMode} FS={FS} welcomeBanner={welcomeBannerEl} onFeastData={mmFeast => { if (rite === "TLM") setFeast(f => ({ ...f, name: mmFeast.name, rankLabel: mmFeast.class, commemoration: mmFeast.commemoration })); }} />}
           {tab === "ask" && <AskScreen children={children} setChildren={setChildren} rite={rite} nightMode={nightMode} FS={FS} />}
           {tab === "prayers" && <PrayerHub rite={rite} feast={feast} selectedDate={selectedDate} nightMode={nightMode} FS={FS} />}
           {tab === "sacraments" && <SacramentHub rite={rite} nightMode={nightMode} children={children} scrollToTop={scrollToTop} />}
