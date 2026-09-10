@@ -1194,9 +1194,7 @@ function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcome
         )}
         {longStory && (
           <div>
-            {longStory.split("
-
-").map((para, i) => (
+            {longStory.split("\n\n").map((para, i) => (
               <p key={i} style={{
                 fontSize: para.startsWith("Something to talk about:") ? "14px" : "15px",
                 color: para.startsWith("Something to talk about:") ? C.midBrown : C.text,
