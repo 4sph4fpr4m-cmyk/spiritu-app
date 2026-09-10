@@ -1183,6 +1183,7 @@ function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcome
             }}>
               Read tonight's story
             </button>
+            <p style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", textAlign: "center", margin: "8px 0 0", fontStyle: "italic", opacity: 0.75 }}>Stories are AI-generated and imaginative. Historical details may vary.</p>
             {longStoryError && <p style={{ fontSize: "12px", color: "#8B1A1A", fontFamily: "Georgia, serif", textAlign: "center", marginTop: "8px" }}>Something went wrong — tap to try again.</p>}
           </div>
         )}
