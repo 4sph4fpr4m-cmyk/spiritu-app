@@ -460,6 +460,7 @@ const TLM_FIXED = {
   "8-23": { name: "St. Philip Benizi, Confessor", rank: "class_3", color: "white" },
   "8-24": { name: "St. Bartholomew, Apostle", rank: "class_2", color: "red" },
   "8-25": { name: "St. Louis, King and Confessor", rank: "class_3", color: "white" },
+  "8-26": { name: "St. Zephyrinus, Pope and Martyr", rank: "commemoration", color: "red" },
   "8-27": { name: "St. Joseph Calasanctius, Confessor", rank: "class_3", color: "white" },
   "8-28": { name: "St. Augustine, Bishop, Confessor and Doctor", rank: "class_3", color: "white" },
   "8-29": { name: "Beheading of St. John the Baptist", rank: "class_3", color: "red" },
@@ -704,6 +705,40 @@ Return ONLY valid JSON. No markdown, no backticks, no preamble.`;
   const text = data.content?.find(b => b.type === "text")?.text || "{}";
   try { return JSON.parse(text.replace(/```json|```/g, "").trim()); }
   catch { return null; }
+}
+
+// ═══════════════════════════════════════════════════════════
+// LONG STORY GENERATOR
+// ═══════════════════════════════════════════════════════════
+
+async function generateLongStory(feast, date, rite) {
+  const feastName = feast?.name || "today's saint";
+  const dateStr = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const riteNote = rite === "TLM" ? "This family follows the Traditional Latin Mass." : "";
+  const prompt = `You are writing a vivid, dramatic read-aloud story for a Catholic family. The story should take about 10 minutes to read aloud -- approximately 1,500 to 1,800 words.
+
+Today is ${dateStr}. The feast is: ${feastName}. ${riteNote}
+
+Write a single, fully dramatized scene from this saint's life. Requirements:
+- Open with a one-line setting: place and approximate year. Example: "Rome, 258 AD." or "The plains of Castile, 1521."
+- Write in third person, past tense, with the saint as protagonist
+- Include vivid sensory detail -- what they see, hear, smell, feel
+- Include natural dialogue -- how people actually speak, not formal speeches
+- Build tension toward a single moment of decision, courage, faith, or conversion
+- End with a brief "What happened next" -- 2-3 sentences connecting this scene to the rest of the saint's life
+- Close with: "Something to talk about:" followed by a single open question about the scene
+
+No preamble, no title, no headings -- just the story starting with the setting line.`;
+
+  const res = await fetch("/api/anthropic", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6", max_tokens: 2200,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return data.content?.[0]?.text || null;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1075,6 +1110,21 @@ function ReadingsSection({ date, feast, rite, onFeastData }) {
 
 function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcomeBanner, onFeastData }) {
   const [ageGroup, setAgeGroup] = useState("young");
+  const [longStory, setLongStory] = useState(null);
+  const [longStoryLoading, setLongStoryLoading] = useState(false);
+  const [longStoryError, setLongStoryError] = useState(false);
+
+  async function handleGenerateLongStory() {
+    setLongStoryLoading(true);
+    setLongStoryError(false);
+    try {
+      const story = await generateLongStory(feast, date, rite);
+      setLongStory(story);
+    } catch {
+      setLongStoryError(true);
+    }
+    setLongStoryLoading(false);
+  }
   useEffect(() => { setTimeout(() => { document.querySelectorAll('.ck-scroll').forEach(el => { el.scrollTop = 0; }); }, 0); }, [date]);
   const theme = getTheme(feast?.season);
   const dateStr = date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
@@ -1113,6 +1163,58 @@ function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcome
           </p>
         )}
       </Card>
+
+      {/* Story of the Day -- on demand */}
+      <div style={{ background: "#fff", borderRadius: "16px", padding: "20px 22px", marginBottom: "12px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", borderLeft: `3px solid #8B1A1A` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+          <span style={{ fontSize: "16px" }}>📜</span>
+          <span style={{ fontSize: "11px", fontFamily: "Georgia, serif", letterSpacing: "0.08em", textTransform: "uppercase", color: C.mutedGold, fontWeight: "600" }}>Tonight's Story</span>
+          <span style={{ fontSize: "11px", color: C.mutedGold, fontFamily: "Georgia, serif", marginLeft: "auto", fontStyle: "italic" }}>~10 min read aloud</span>
+        </div>
+        {!longStory && !longStoryLoading && (
+          <div>
+            <p style={{ fontSize: "13px", color: C.text, fontFamily: "Georgia, serif", lineHeight: "1.65", margin: "0 0 14px", fontStyle: "italic" }}>
+              A fully dramatized scene from {feast?.name ? `the life of ${feast.name}` : "today's saint's life"} — with dialogue, tension, and a moment of grace. Written to be read aloud at dinner or bedtime.
+            </p>
+            <button onClick={handleGenerateLongStory} style={{
+              width: "100%", padding: "12px", borderRadius: "12px",
+              background: "#1a2744", border: "none", cursor: "pointer",
+              color: "#c9a96e", fontFamily: "Georgia, serif", fontSize: "14px", fontWeight: "600",
+            }}>
+              Read tonight's story
+            </button>
+            {longStoryError && <p style={{ fontSize: "12px", color: "#8B1A1A", fontFamily: "Georgia, serif", textAlign: "center", marginTop: "8px" }}>Something went wrong — tap to try again.</p>}
+          </div>
+        )}
+        {longStoryLoading && (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: "13px", color: C.mutedGold, fontFamily: "Georgia, serif", fontStyle: "italic" }}>Writing tonight's story...</div>
+            <div style={{ marginTop: "12px" }}><Skeleton height={14} radius={4} /><div style={{ height: 8 }} /><Skeleton height={14} radius={4} /><div style={{ height: 8 }} /><Skeleton height={14} radius={4} /></div>
+          </div>
+        )}
+        {longStory && (
+          <div>
+            {longStory.split("
+
+").map((para, i) => (
+              <p key={i} style={{
+                fontSize: para.startsWith("Something to talk about:") ? "14px" : "15px",
+                color: para.startsWith("Something to talk about:") ? C.midBrown : C.text,
+                fontFamily: "Georgia, serif",
+                lineHeight: "1.85",
+                margin: "0 0 14px",
+                fontStyle: para.startsWith("Something to talk about:") ? "normal" : "italic",
+                fontWeight: para.startsWith("Something to talk about:") ? "600" : "normal",
+              }}>{para}</p>
+            ))}
+            <button onClick={() => setLongStory(null)} style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: "12px", color: C.mutedGold, fontFamily: "Georgia, serif",
+              padding: "4px 0", textDecoration: "underline",
+            }}>Generate a new story</button>
+          </div>
+        )}
+      </div>
 
       <Card icon="🍽️" label="Dinner Table Question" accent={C.gold}>
         {loading ? <Skeleton height={50} radius={8} /> : (
