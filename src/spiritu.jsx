@@ -4681,7 +4681,7 @@ function RiteScreen({ rite, onSelect, onNext, onBack }) {
             {rite === r.id && <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", fontFamily: "Georgia, serif", margin: "14px 0 0", lineHeight: "1.6", fontStyle: "italic" }}>{r.detail}</p>}
           </button>
         ))}
-        <button onClick={() => { onSelect("NO"); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "rgba(255,255,255,0.25)", fontFamily: "Georgia, serif", padding: "8px", textAlign: "center" }}>Not sure -- start with Ordinary Form</button>
+        <button onClick={() => setObScreen("rite")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "13px", color: "rgba(255,255,255,0.25)", fontFamily: "Georgia, serif", padding: "8px", textAlign: "center" }}>Not sure? You can change this anytime in Settings.</button>
       </div>
       <div style={{ padding: "0 24px 56px", display: "flex", gap: "12px" }}>
         <button onClick={onBack} style={{ padding: "14px 20px", borderRadius: "28px", border: "1px solid rgba(255,255,255,0.15)", background: "transparent", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontFamily: "Georgia, serif", fontSize: "14px" }}>Back</button>
