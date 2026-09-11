@@ -305,6 +305,14 @@ function getLiturgicalDayNO(date) {
   const key = `${month}-${day}`;
   if (NO_FIXED[key]) return { ...NO_FIXED[key], season, rankLabel: rankLabelNO(NO_FIXED[key].rank) };
   if (date.getDay() === 0) return { name: `Sunday of ${season}`, rank: "sunday", color: seasonColorNO(season), season, rankLabel: "Sunday" };
+  // No fixed NO feast -- check TLM calendar for a saint to feature
+  const month2 = date.getMonth() + 1;
+  const day2 = date.getDate();
+  const tlmKey = month2 + "-" + day2;
+  const tlmFeast = TLM_FIXED[tlmKey];
+  if (tlmFeast) {
+    return { ...tlmFeast, season, color: seasonColorNO(season), rankLabel: "Traditional Calendar", fromTLM: true };
+  }
   return { name: null, rank: "feria", color: seasonColorNO(season), season, rankLabel: "Weekday" };
 }
 
@@ -679,20 +687,27 @@ async function generateDailyContent(feast, date, rite) {
     ? "This family follows the Traditional Latin Mass (1962 Missal). Use traditional language where appropriate (e.g. 'Blessed Virgin Mary' not just 'Mary', 'Our Lord' for Jesus, etc.)."
     : "This family follows the Ordinary Form of the Roman Rite.";
 
+  const isFeria = !feast.name;
+  const celebrationName = feast.name || (feast.season + " Weekday");
+  const storyInstruction = isFeria
+    ? `storyYoung: A 3-4 sentence reflection on the season of ${feast.season} for ages 4-6. Warm and concrete. No specific saint needed -- focus on what the Church is doing this season.
+  storyOlder: A 4-5 sentence reflection on the meaning of ${feast.season} for ages 7-10. Connect to Scripture or the life of the Church.`
+    : `storyYoung: 3-4 sentences about ${feast.name} for ages 4-6. Warm, concrete, wonder-filled. Simple words.
+  storyOlder: 4-5 sentences about ${feast.name} for ages 7-10. Real historical detail. Something surprising or inspiring.`;
+
   const prompt = `You are generating daily content for Spiritu, a Catholic family faith app. Today is ${dateStr}. ${riteNote}
 
-Today's liturgical celebration: "${feast.name || (feast.season + " Weekday")}"
+Today's liturgical celebration: "${celebrationName}"
 Season: ${feast.season} | Rank: ${feast.rankLabel}
 
 Generate a JSON object with exactly these fields:
 {
-  "storyYoung": "3-4 sentences for ages 4-6. Warm, concrete, wonder-filled. Simple words.",
-  "storyOlder": "4-5 sentences for ages 7-10. Real historical detail. Something surprising or inspiring.",
-  "dinnerQuestion": "One dinner table question connecting today's feast to everyday family life.",
-  "prayer": "2-3 sentence family prayer. Address the saint or mystery directly. End with Amen.",
+  ${storyInstruction},
+  "dinnerQuestion": "One dinner table question connecting today's ${isFeria ? "season" : "feast"} to everyday family life.",
+  "prayer": "2-3 sentence family prayer. ${isFeria ? "Address God or Mary directly, appropriate to the season." : "Address the saint or mystery directly."} End with Amen.",
   "activityTitle": "Activity title (5 words max)",
   "activityDescription": "One sentence. Practical and doable at home tonight.",
-  "funFact": "One fascinating fact about today's feast. 2 sentences max."
+  "funFact": "One fascinating fact about ${isFeria ? "the season of " + feast.season : "today's feast"}. 2 sentences max."
 }
 
 Return ONLY valid JSON. No markdown, no backticks, no preamble.`;
@@ -1141,11 +1156,12 @@ function DailyFeed({ feast, content, loading, date, onAskQuestion, rite, welcome
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
           <div style={{ fontSize: "11px", color: theme.accent, letterSpacing: "0.1em", textTransform: "uppercase" }}>{feast?.rankLabel}</div>
           {rite === "TLM" && <div style={{ fontSize: "9px", background: "rgba(255,255,255,0.15)", color: "#fff", padding: "2px 6px", borderRadius: "8px", letterSpacing: "0.05em" }}>1962</div>}
+          {rite === "NO" && feast?.fromTLM && <div style={{ fontSize: "9px", background: "rgba(201,169,110,0.25)", color: "#c9a96e", padding: "2px 7px", borderRadius: "8px", letterSpacing: "0.05em", border: "1px solid rgba(201,169,110,0.3)" }}>Traditional Calendar</div>}
         </div>
         <div style={{ fontSize: feast?.name && feast.name.length > 35 ? "15px" : "20px", color: "#fff", fontWeight: "700", lineHeight: "1.2", marginBottom: "6px" }}>
-          {feast?.name || `${dateStr.split(",")[0]} of ${feast?.season}`}
+          {feast?.name || `${feast?.season} — ${dateStr.split(",")[0]}`}
         </div>
-        <div style={{ fontSize: "11px", color: theme.accent, marginBottom: "8px", fontFamily: "Georgia, serif", opacity: 0.9 }}>{theme.label}</div>
+        <div style={{ fontSize: "11px", color: theme.accent, marginBottom: "8px", fontFamily: "Georgia, serif", opacity: 0.9 }}>{feast?.rankLabel && feast.rankLabel !== "Weekday" && feast.rankLabel !== "Feria" ? feast.rankLabel : theme.label}</div>
         {loading ? <Skeleton height={36} radius={8} /> : (
           <div style={{ fontSize: "12px", color: theme.textColor, lineHeight: "1.5", fontStyle: "italic", opacity: 0.9 }}>{content?.funFact}</div>
         )}
