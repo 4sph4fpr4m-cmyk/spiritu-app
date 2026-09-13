@@ -690,10 +690,10 @@ async function generateDailyContent(feast, date, rite) {
   const isFeria = !feast.name;
   const celebrationName = feast.name || (feast.season + " Weekday");
   const storyInstruction = isFeria
-    ? `storyYoung: A 3-4 sentence reflection on the season of ${feast.season} for ages 4-6. Warm and concrete. No specific saint needed -- focus on what the Church is doing this season.
-  storyOlder: A 4-5 sentence reflection on the meaning of ${feast.season} for ages 7-10. Connect to Scripture or the life of the Church.`
-    : `storyYoung: 3-4 sentences about ${feast.name} for ages 4-6. Warm, concrete, wonder-filled. Simple words.
-  storyOlder: 4-5 sentences about ${feast.name} for ages 7-10. Real historical detail. Something surprising or inspiring.`;
+    ? `storyYoung: A 3-4 sentence reflection on the season of ${feast.season} for ages 4-6. Write in the voice of G.K. Chesterton -- warm, paradoxical, gently surprising. Find something unexpected about what the Church is doing this season. Simple enough for a child, sharp enough to make a parent smile.
+  storyOlder: A 4-5 sentence reflection on the meaning of ${feast.season} for ages 7-10. Write in the voice of G.K. Chesterton -- begin with something counterintuitive about the season, connect to Scripture or the life of the Church, end with something that reframes everything.`
+    : `storyYoung: 3-4 sentences about ${feast.name} for ages 4-6. Write in the voice of G.K. Chesterton -- warm, paradoxical, gently surprising. Find the one thing about this saint that seems contradictory but is actually the point. Simple enough for a child, sharp enough to make a parent smile. No jargon.
+  storyOlder: 4-5 sentences about ${feast.name} for ages 7-10. Write in the voice of G.K. Chesterton -- witty, paradoxical, historically grounded. Begin with something surprising or counterintuitive about the saint. Include one real historical detail. End with something that reframes everything that came before.`;
 
   const prompt = `You are generating daily content for Spiritu, a Catholic family faith app. Today is ${dateStr}. ${riteNote}
 
@@ -734,13 +734,22 @@ async function generateLongStory(feast, date, rite) {
 
 Today is ${dateStr}. The feast is: ${feastName}. ${riteNote}
 
-Write a single, fully dramatized scene from this saint's life. Requirements:
+Write in the narrative voice of C.S. Lewis -- specifically his approach in the Chronicles of Narnia and his biographical writing on St. Francis. That means:
+- A narrator with a distinct, warm, slightly wry point of view who confides in the reader
+- Short direct sentences mixed with longer ones that build to something
+- Concrete physical images rather than abstract descriptions
+- Dry understatement when the moment calls for it ("the kind of thing that happens when...")
+- A sense that the narrator finds the story genuinely astonishing and wants the reader to feel the same
+- Never sentimental, never condescending -- the child and the adult reading aloud both get something
+- Morally serious without being preachy
+
+Write a single, fully dramatized scene from this saint's life:
 - Open with a one-line setting: place and approximate year. Example: "Rome, 258 AD." or "The plains of Castile, 1521."
-- Write in third person, past tense, with the saint as protagonist
-- Include vivid sensory detail -- what they see, hear, smell, feel
-- Include natural dialogue -- how people actually speak, not formal speeches
+- Third person, past tense, with the saint as protagonist
+- Vivid sensory detail -- what they see, hear, smell, feel
+- Natural dialogue -- how people actually speak under pressure, not formal speeches
 - Build tension toward a single moment of decision, courage, faith, or conversion
-- End with a brief "What happened next" -- 2-3 sentences connecting this scene to the rest of the saint's life
+- End with a brief "What happened next" -- 2-3 sentences in the same voice connecting this scene to the rest of the saint's life
 - Close with: "Something to talk about:" followed by a single open question about the scene
 
 No preamble, no title, no headings -- just the story starting with the setting line.`;
