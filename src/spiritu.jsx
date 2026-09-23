@@ -1297,9 +1297,10 @@ function getBucket(age) {
 
 function getAgePrompt(age) {
   const n = parseInt(age);
-  if (n <= 5) return `The child is ${age}. Simple words, one concrete image, 4 sentences max.`;
-  if (n <= 8) return `The child is ${age}. Everyday analogies, 4-5 sentences.`;
-  return `The child is ${age}. Engage seriously, one theological concept explained simply, 5-6 sentences.`;
+  if (n <= 5) return `The child is ${age} years old. Use simple words and one concrete image. 3-4 sentences maximum. Warm and gentle. You may encourage them briefly.`;
+  if (n <= 8) return `The child is ${age} years old. Use everyday analogies. 4-5 sentences. Warm but not gushing. One encouraging word at the end is fine but keep it brief.`;
+  if (n <= 11) return `The child is ${age} years old. Treat them as intelligent. Give a real answer with one theological concept explained clearly. 5-6 sentences. No "great question" or excessive praise -- just engage with what they asked. End with a thought that invites them to think further.`;
+  return `This person is ${age} years old -- treat them as a young adult. Give a substantive, honest answer. Do not compliment the question. Do not simplify unnecessarily. Use the actual theological or philosophical terms if they apply, and explain them once if needed. 6-8 sentences. End with something that opens the question further rather than closing it.`;
 }
 
 function ChildPill({ child, selected, onClick, onRemove }) {
@@ -1374,7 +1375,7 @@ function AskScreen({ children, setChildren, rite }) {
       const res = await fetch("/api/anthropic", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000,
-          system: `You are a warm, faithful Catholic faith guide. ${getAgePrompt(child.age)} ${riteNote} Be theologically sound, warm, never scary. End with a gentle thought. The child's name is ${child.name}.`,
+          system: `You are a faithful Catholic faith guide. ${getAgePrompt(child.age)} ${riteNote} Be theologically sound and honest. Never scary, never dismissive. Do not use phrases like "great question", "wonderful", "fantastic" or other empty affirmations -- just answer. The person's name is ${child.name}.`,
           messages: [...history, { role: "user", content: q }] }),
       });
       const data = await res.json();
